@@ -1,0 +1,57 @@
+{
+  "expo": {
+    "name": "Tentuin",
+    "slug": "tentuin",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "tentuin",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/images/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#6C63FF"
+    },
+    "sdkVersion": "54.0.0",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "id.tentuin.student"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#6C63FF"
+      },
+      "package": "id.tentuin.student",
+      "permissions": [],
+      "newArchEnabled": false
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#6C63FF",
+          "image": "./assets/images/splash.png",
+          "resizeMode": "contain"
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "5650f07b-f22c-48d9-a5ec-52b9ad61e5f5"
+      },
+      "router": {}
+    },
+    "owner": "frnspn03"
+  }
+}

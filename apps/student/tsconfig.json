@@ -1,0 +1,28 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "paths": {
+      "@tentuin/config": [
+        "../../packages/config/src/index.ts"
+      ],
+      "@tentuin/types": [
+        "../../packages/types/src/index.ts"
+      ],
+      "@tentuin/supabase": [
+        "../../packages/supabase/src/index.ts"
+      ],
+      "@tentuin/ui": [
+        "../../packages/ui/src/index.ts"
+      ]
+    }
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    ".expo/types/**/*.d.ts",
+    "expo-env.d.ts",
+    "nativewind-env.d.ts",
+    ".expo/types/**/*.ts"
+  ]
+}
