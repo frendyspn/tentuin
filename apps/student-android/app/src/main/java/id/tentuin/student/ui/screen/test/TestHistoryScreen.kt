@@ -27,20 +27,16 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import id.tentuin.student.core.datastore.SessionDataStore
 import id.tentuin.student.data.model.TestResult
-import id.tentuin.student.data.repository.TestRepository
 import id.tentuin.student.ui.component.RiasecChip
 import id.tentuin.student.ui.navigation.Route
 import id.tentuin.student.ui.theme.Background
@@ -50,36 +46,15 @@ import id.tentuin.student.ui.theme.Surface
 import id.tentuin.student.ui.theme.TentuinTypography
 import id.tentuin.student.ui.theme.TextPrimary
 import id.tentuin.student.ui.theme.TextSub
-import kotlinx.coroutines.flow.first
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 @Composable
 fun TestHistoryScreen(
     navController: NavController,
-    testRepository: TestRepository, // Ideally through a dedicated ViewModel
-    sessionDataStore: SessionDataStore,
+    viewModel: TestHistoryViewModel = hiltViewModel(),
 ) {
-    var history by remember { mutableStateOf<List<TestResult>?>(null) }
-    var isLoading by remember { mutableStateOf(true) }
-    var error by remember { mutableStateOf<String?>(null) }
-
-    LaunchedEffect(Unit) {
-        val userId = sessionDataStore.userId.first()
-        if (userId != null) {
-            testRepository.getHistory(userId)
-                .onSuccess {
-                    history = it
-                    isLoading = false
-                }
-                .onFailure {
-                    error = "Gagal memuat riwayat test"
-                    isLoading = false
-                }
-        } else {
-            isLoading = false
-        }
-    }
+    val state by viewModel.uiState.collectAsState()
 
     Column(
         modifier = Modifier
@@ -87,6 +62,7 @@ fun TestHistoryScreen(
             .background(Background)
             .statusBarsPadding(),
     ) {
+        // Top bar
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
@@ -97,27 +73,38 @@ fun TestHistoryScreen(
             IconButton(onClick = { navController.popBackStack() }) {
                 Icon(Icons.Default.ArrowBack, contentDescription = "Kembali", tint = TextPrimary)
             }
-            Text(text = "Riwayat Test", style = TentuinTypography.titleLarge, color = TextPrimary)
+            Text(
+                text = "Riwayat Test",
+                style = TentuinTypography.titleLarge,
+                color = TextPrimary,
+            )
         }
 
-        if (isLoading) {
+        if (state.isLoading) {
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(color = Primary)
             }
-        } else if (error != null) {
+        } else if (state.error != null) {
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(text = error!!, style = TentuinTypography.bodyMedium, color = TextPrimary)
+                Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(24.dp)) {
+                    Text(text = state.error!!, style = TentuinTypography.bodyMedium, color = TextPrimary, textAlign = TextAlign.Center)
+                    Spacer(Modifier.height(16.dp))
+                    TextButton(onClick = { viewModel.loadHistory() }) {
+                        Text("Coba Lagi", color = Primary)
+                    }
+                }
             }
-        } else if (history.isNullOrEmpty()) {
+        } else if (state.history.isEmpty()) {
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(text = "Belum ada riwayat test", style = TentuinTypography.bodyMedium, color = TextSub)
+                Text(text = "Belum ada riwayat test.", style = TentuinTypography.bodyMedium, color = TextSub)
             }
         } else {
             LazyColumn(
+                modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                items(history!!) { result ->
+                items(state.history) { result ->
                     HistoryCard(result = result) {
                         navController.navigate(Route.TestResult.createRoute(result.riasecCode, true))
                     }
@@ -129,11 +116,15 @@ fun TestHistoryScreen(
 
 @Composable
 private fun HistoryCard(result: TestResult, onClick: () -> Unit) {
-    val dateFormat = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault())
-    val dateStr = try {
-        dateFormat.format(SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).parse(result.createdAt)!!)
-    } catch (e: Exception) {
-        result.createdAt
+    val sdf = remember { SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault()) }
+    val dateStr = remember(result.completedAt) {
+        try {
+            // Supabase format: 2023-10-27T10:00:00.000Z
+            val date = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US).parse(result.completedAt ?: "")
+            if (date != null) sdf.format(date) else "-"
+        } catch (e: Exception) {
+            result.completedAt ?: "-"
+        }
     }
 
     Card(

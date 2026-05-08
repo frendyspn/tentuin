@@ -16,7 +16,6 @@ import { colors, fonts } from '@tentuin/config'
 import { Input, Button } from '@tentuin/ui'
 import { supabase } from '@tentuin/supabase'
 import { useAuthStore } from '../stores/authStore'
-import { hapticSuccess, hapticMedium } from '../utils/haptics'
 
 export default function EditProfileScreen() {
   const router = useRouter()
@@ -31,7 +30,6 @@ export default function EditProfileScreen() {
 
   const handleSave = async () => {
     if (!session?.user?.id) return
-    hapticMedium()
     setSaving(true)
     try {
       const { data, error } = await supabase
@@ -48,7 +46,6 @@ export default function EditProfileScreen() {
 
       if (error) throw error
       setProfile(data)
-      hapticSuccess()
       Alert.alert('Berhasil', 'Profil berhasil diperbarui.')
       router.back()
     } catch (err: any) {

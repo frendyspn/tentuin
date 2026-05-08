@@ -13,6 +13,10 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+import id.tentuin.student.data.repository.BookmarkRepository
+import id.tentuin.student.core.datastore.SessionDataStore
+import kotlinx.coroutines.flow.first
+
 data class TestResultUiState(
     val riasecCode: String = "",
     val majors: List<MajorRow> = emptyList(), // Unique majors to display
@@ -20,12 +24,17 @@ data class TestResultUiState(
     val universities: List<UniversityRow> = emptyList(),
     val filteredUniversities: List<UniversityRow> = emptyList(),
     val selectedMajorNames: List<String> = emptyList(),
+    val bookmarkedUniversityIds: Set<String> = emptySet(),
+    val isGuest: Boolean = true,
+    val userId: String? = null,
     val loadingRecommendations: Boolean = true,
 )
 
 @HiltViewModel
 class TestResultViewModel @Inject constructor(
     private val exploreRepository: ExploreRepository,
+    private val bookmarkRepository: BookmarkRepository,
+    private val sessionDataStore: SessionDataStore,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(TestResultUiState())
     val uiState: StateFlow<TestResultUiState> = _uiState.asStateFlow()
@@ -43,17 +52,63 @@ class TestResultViewModel @Inject constructor(
             val allUnis = allUnisRes.getOrNull() ?: emptyList()
             
             val recommendedMajors = allMajors.filter { it.riasecCodes.contains(dominantCode) }
-            val uniqueMajors = recommendedMajors.distinctBy { it.name.trim().lowercase() }
+            val uniqueMajors = recommendedMajors.distinctBy { it.name.trim().lowercase() }.take(10) // Take top 10 unique majors to avoid too many
+            
+            // Get user info and bookmarks
+            val userId = sessionDataStore.userId.first()
+            val isGuest = userId == null
+            var bookmarks = emptySet<String>()
+            
+            if (!isGuest && userId != null) {
+                val bookmarksRes = bookmarkRepository.getBookmarks(userId)
+                bookmarksRes.onSuccess { list ->
+                    bookmarks = list.map { it.universityId }.toSet()
+                }
+            }
             
             _uiState.update { 
                 it.copy(
                     allRecommendedMajors = recommendedMajors,
                     majors = uniqueMajors,
                     universities = allUnis,
+                    isGuest = isGuest,
+                    userId = userId,
+                    bookmarkedUniversityIds = bookmarks,
                     loadingRecommendations = false
                 ) 
             }
             filterUniversities()
+        }
+    }
+
+    fun toggleBookmark(universityId: String) {
+        val state = _uiState.value
+        val userId = state.userId
+        if (state.isGuest || userId == null) return
+
+        viewModelScope.launch {
+            val isCurrentlyBookmarked = state.bookmarkedUniversityIds.contains(universityId)
+            
+            // Optimistic update
+            _uiState.update {
+                val newBookmarks = it.bookmarkedUniversityIds.toMutableSet()
+                if (isCurrentlyBookmarked) newBookmarks.remove(universityId) else newBookmarks.add(universityId)
+                it.copy(bookmarkedUniversityIds = newBookmarks)
+            }
+            
+            if (isCurrentlyBookmarked) {
+                val res = bookmarkRepository.deleteBookmark(userId, universityId)
+                if (res.isFailure) {
+                    // Revert
+                    _uiState.update { it.copy(bookmarkedUniversityIds = it.bookmarkedUniversityIds + universityId) }
+                }
+            } else {
+                val res = bookmarkRepository.createBookmark(userId, universityId)
+                if (res.isFailure) {
+                    // Revert
+                    _uiState.update { it.copy(bookmarkedUniversityIds = it.bookmarkedUniversityIds - universityId) }
+                }
+            }
         }
     }
 

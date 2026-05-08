@@ -24,7 +24,8 @@
       },
       "package": "id.tentuin.student",
       "permissions": [],
-      "newArchEnabled": false
+      "newArchEnabled": false,
+      "edgeToEdge": true
     },
     "web": {
       "bundler": "metro",
@@ -34,6 +35,14 @@
     "plugins": [
       "expo-router",
       "expo-secure-store",
+      [
+        "expo-notifications",
+        {
+          "color": "#6C63FF",
+          "defaultChannel": "default",
+          "androidMode": "default"
+        }
+      ],
       [
         "expo-splash-screen",
         {

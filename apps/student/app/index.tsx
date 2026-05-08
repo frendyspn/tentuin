@@ -6,6 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { colors } from '@tentuin/config'
 
 const ONBOARDING_KEY = 'tentuin_onboarding_done'
+const INIT_TIMEOUT = 5000 // 5 seconds timeout
 
 export default function Index() {
   const { isInitialized, session } = useAuthStore()
@@ -13,29 +14,24 @@ export default function Index() {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    let resolved = false
-
     const checkOnboarding = async () => {
       try {
         const value = await AsyncStorage.getItem(ONBOARDING_KEY)
-        resolved = true
         setOnboardingDone(value === 'true')
       } catch (e) {
         console.error('[Index] Error checking onboarding:', e)
-        resolved = true
         setOnboardingDone(false)
         setError('Failed to load app state')
       }
     }
 
-    // Fallback kalau AsyncStorage hang (sangat jarang, tapi bisa terjadi di emulator)
     const timeoutId = setTimeout(() => {
-      if (!resolved) {
+      if (onboardingDone === null) {
         console.warn('[Index] Onboarding check timeout, defaulting to false')
-        resolved = true
         setOnboardingDone(false)
+        setError('Loading timeout - defaulting to home')
       }
-    }, 3000)
+    }, INIT_TIMEOUT)
 
     checkOnboarding()
 

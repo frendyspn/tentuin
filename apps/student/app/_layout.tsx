@@ -14,7 +14,6 @@ import {
 import { supabase } from '@tentuin/supabase'
 import { useAuthStore } from '../stores/authStore'
 import { getProfile } from '@tentuin/supabase'
-import { OfflineBanner } from '../components/OfflineBanner'
 
 SplashScreen.preventAutoHideAsync()
 
@@ -182,18 +181,17 @@ export default function RootLayout() {
           setProfile(null)
         }
 
-        // Hanya navigate saat SIGNED_IN (login baru) atau SIGNED_OUT
-        // TOKEN_REFRESHED & SESSION_UPDATED jangan trigger redirect — user mungkin sedang di tengah flow lain
+        // Handle navigation for both SIGNED_IN and TOKEN_REFRESHED after initialization
         if (initDoneRef.current) {
-          if (event === 'SIGNED_IN' && session?.user) {
-            console.log('[Auth] Redirecting to home after SIGNED_IN')
+          if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'SESSION_UPDATED') && session?.user) {
+            console.log('[Auth] Redirecting to home after', event)
             try {
               router.replace('/(tabs)/home')
             } catch (e) {
               console.error('[Auth] Navigation error:', e)
             }
-          } else if (event === 'SIGNED_OUT') {
-            console.log('[Auth] User signed out')
+          } else if (event === 'SIGNED_OUT' || !session?.user) {
+            console.log('[Auth] User signed out or no session')
             router.replace('/(auth)/login')
           }
         }
@@ -215,7 +213,6 @@ export default function RootLayout() {
   return (
     <>
       <StatusBar style="auto" />
-      <OfflineBanner />
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="index" />
         <Stack.Screen name="(onboarding)" />

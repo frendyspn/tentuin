@@ -47,7 +47,7 @@ class MainActivity : ComponentActivity() {
 
     private fun shouldShowBottomBar(route: String?): Boolean {
         if (route == null) return false
-        val mainRoutes = listOf("home", "test", "explore", "profile")
+        val mainRoutes = listOf("main/home", "main/test", "main/explore", "main/profile")
         return mainRoutes.any { route.startsWith(it) }
     }
 }

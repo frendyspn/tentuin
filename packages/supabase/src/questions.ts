@@ -1,4 +1,4 @@
-import { supabase, supabaseUrl, supabaseAnonKey } from './client'
+import { supabaseUrl, supabaseAnonKey } from './client'
 
 export type Question = {
   id: string
@@ -54,7 +54,7 @@ export const saveTestResult = async (
   // Try REST API directly
   try {
     console.log('[Supabase] saveTestResult: using REST API...')
-    const restUrl = `${supabase.supabaseUrl}/rest/v1/test_results`
+    const restUrl = `${supabaseUrl}/rest/v1/test_results`
     
     const body = {
       user_id: userId,
@@ -110,7 +110,7 @@ export const getTestHistory = async (userId: string, accessToken?: string) => {
   // Try REST API directly like getQuestions
   try {
     console.log('[Supabase] getTestHistory: trying REST API...')
-    const restUrl = `${supabase.supabaseUrl}/rest/v1/test_results?user_id=eq.${userId}&order=completed_at.desc`
+    const restUrl = `${supabaseUrl}/rest/v1/test_results?user_id=eq.${userId}&order=completed_at.desc`
     console.log('[Supabase] getTestHistory: URL:', restUrl)
     
     const headers: Record<string, string> = {

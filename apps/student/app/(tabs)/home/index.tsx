@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import {
-  ActivityIndicator,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -15,6 +14,7 @@ import { getPartnerUniversities, getTestHistory, type UniversityRow } from '@ten
 import { useAuthStore } from '../../../stores/authStore'
 import { useRequireAuth } from '../../../hooks/useRequireAuth'
 import { AuthPromptSheet } from '../../../components/auth/AuthPromptSheet'
+import { HomeUniRowSkeleton } from '../../../components/Skeleton'
 
 // ─── Static content ───────────────────────────────────────────────────────────
 
@@ -137,9 +137,7 @@ export default function HomeScreen() {
         </View>
 
         {loadingUnis ? (
-          <View style={styles.uniLoading}>
-            <ActivityIndicator color={colors.primary} />
-          </View>
+          <HomeUniRowSkeleton />
         ) : featuredUnis.length > 0 ? (
           <ScrollView
             horizontal

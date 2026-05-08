@@ -3,7 +3,7 @@ import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-nati
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useRouter } from 'expo-router'
 import { Ionicons } from '@expo/vector-icons'
-import { signOut, getTestHistory, getBookmarkedUniversities } from '@tentuin/supabase'
+import { signOut, clearPushToken, getTestHistory, getBookmarkedUniversities } from '@tentuin/supabase'
 import { colors, fonts } from '@tentuin/config'
 import { Button } from '@tentuin/ui'
 import { useAuthStore } from '../../../stores/authStore'
@@ -42,11 +42,16 @@ export default function ProfileScreen() {
       { text: 'Batal', style: 'cancel' },
       {
         text: 'Keluar', style: 'destructive',
-        onPress: async () => {
+        onPress: () => {
           hapticWarning()
-          await signOut()
+          // Simpan userId sebelum reset (untuk clearPushToken di background)
+          const uid = session?.user?.id
+          // Hapus sesi lokal & navigasi DULU — tidak perlu tunggu network
           reset()
-          router.replace('/(tabs)/home')
+          router.replace('/(auth)/login')
+          // Background: hapus push token dari DB + invalidate Supabase token
+          if (uid) clearPushToken(uid).catch(() => {})
+          signOut().catch(err => console.warn('[SignOut] Background error:', err))
         },
       },
     ])

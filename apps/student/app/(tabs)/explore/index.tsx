@@ -12,6 +12,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useRouter } from 'expo-router'
 import { hapticLight, hapticSelection } from '../../../utils/haptics'
+import { ExploreUniListSkeleton, ExploreMajorGridSkeleton } from '../../../components/Skeleton'
 import { Ionicons } from '@expo/vector-icons'
 import { colors, fonts } from '@tentuin/config'
 import {
@@ -446,7 +447,7 @@ export default function ExploreScreen() {
           ListEmptyComponent={
             <View style={styles.empty}>
               {loadingUni
-                ? <ActivityIndicator size="large" color={colors.primary} />
+                ? <ExploreUniListSkeleton />
                 : <>
                     <Ionicons name="business-outline" size={40} color={colors.gray[300]} />
                     <Text style={styles.emptyText}>Tidak ada kampus ditemukan</Text>
@@ -483,7 +484,7 @@ export default function ExploreScreen() {
           ListEmptyComponent={
             <View style={styles.empty}>
               {loadingMajors
-                ? <ActivityIndicator size="large" color={colors.primary} />
+                ? <ExploreMajorGridSkeleton />
                 : <>
                     <Ionicons name="book-outline" size={40} color={colors.gray[300]} />
                     <Text style={styles.emptyText}>Jurusan tidak ditemukan</Text>

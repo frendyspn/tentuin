@@ -4,7 +4,7 @@ import id.tentuin.agent.core.datastore.SessionDataStore
 import id.tentuin.agent.core.network.AgentApi
 import id.tentuin.agent.data.model.*
 import kotlinx.coroutines.flow.first
-import java.time.LocalDate
+import java.util.Calendar
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -13,7 +13,7 @@ class CommissionRepository @Inject constructor(
     private val api: AgentApi,
     private val session: SessionDataStore,
 ) {
-    suspend fun getCommissions(year: Int = LocalDate.now().year): Result<List<AgentCommission>> = runCatching {
+    suspend fun getCommissions(year: Int = Calendar.getInstance().get(Calendar.YEAR)): Result<List<AgentCommission>> = runCatching {
         val userId = session.userId.first() ?: error("Not logged in")
         api.getCommissions(agentId = "eq.$userId", year = "eq.$year")
     }

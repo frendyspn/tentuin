@@ -20,6 +20,7 @@ import { colors, fonts } from '@tentuin/config'
 import { saveTestResult, getUniversitiesByRiasec, saveUniversityBookmark, deleteUniversityBookmark, type RiasecScores, type UniversityRow } from '@tentuin/supabase'
 import { useAuthStore } from '../stores/authStore'
 import { hapticLight, hapticMedium } from '../utils/haptics'
+import { markFirstTestDone } from '../utils/notifications'
 
 // ─── Static content ───────────────────────────────────────────────────────────
 
@@ -148,6 +149,43 @@ export default function TestResultScreen() {
   const shareCardRef = useRef<View>(null)
   const [generatingImage, setGeneratingImage] = useState(false)
 
+  // ── In-app rating ─────────────────────────────────────────────────────────
+  // Tampil sekali saja, 2.5 detik setelah hasil test pertama tersimpan
+  useEffect(() => {
+    if (isHistorical || saving || !saved) return
+
+    const maybeRequestReview = async () => {
+      try {
+        const alreadyPrompted = await AsyncStorage.getItem('tentuin_rating_prompted')
+        if (alreadyPrompted) return
+
+        // Cek native module tersedia sebelum import
+        // (module belum ada kalau build belum di-rebuild setelah install expo-store-review)
+        const { NativeModules } = await import('react-native')
+        if (!NativeModules.ExpoStoreReview) {
+          console.log('[Rating] ExpoStoreReview native module not available, skipping')
+          return
+        }
+
+        // Dynamic import — supaya tidak crash di Expo Go (native module belum ada)
+        const StoreReview = await import('expo-store-review')
+        const available = await StoreReview.isAvailableAsync()
+        if (!available) return
+
+        // Beri waktu user melihat hasil dulu
+        await new Promise<void>((resolve) => setTimeout(resolve, 2500))
+
+        await StoreReview.requestReview()
+        await AsyncStorage.setItem('tentuin_rating_prompted', 'true')
+      } catch (err) {
+        // Silent — jangan crash hanya karena rating gagal
+        console.log('[Rating] Skipped:', err)
+      }
+    }
+
+    maybeRequestReview()
+  }, [saved, saving, isHistorical])
+
   const scores: RiasecScores = params.scores
     ? JSON.parse(params.scores)
     : { realistic: 0, investigative: 0, artistic: 0, social: 0, enterprising: 0, conventional: 0 }
@@ -258,6 +296,8 @@ export default function TestResultScreen() {
       .then(() => {
         console.log('[TestResult] Results saved successfully')
         setSaved(true)
+        // Cancel test reminder — user sudah selesai test pertama
+        markFirstTestDone().catch(() => {})
       })
       .catch((err) => {
         const errorMsg = err?.message ?? 'Gagal menyimpan hasil'

@@ -15,6 +15,7 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         val supabaseUrl = (project.findProperty("SUPABASE_URL") as String?) ?: ""
         val supabaseAnonKey = (project.findProperty("SUPABASE_ANON_KEY") as String?) ?: ""
@@ -26,6 +27,35 @@ android {
         buildConfig = true
         compose = true
     }
+
+    signingConfigs {
+        create("release") {
+            val debugKeystore = file(System.getProperty("user.home") + "/.android/debug.keystore")
+            if (debugKeystore.exists()) {
+                storeFile = debugKeystore
+                storePassword = "android"
+                keyAlias = "androiddebugkey"
+                keyPassword = "android"
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            isMinifyEnabled = false
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            signingConfig = signingConfigs.getByName("release")
+        }
+    }
+
+    // Explicitly add android-junit5 or just use basic test library
+    // For now we add basic testing support
+    sourceSets {
+        getByName("androidTest") {
+            java.srcDir("src/androidTest/java")
+        }
+    }
+
 
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.14"

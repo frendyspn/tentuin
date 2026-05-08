@@ -97,7 +97,7 @@ fun UniversityDetailScreen(
                     }
                 }
 
-                val majors = uni.majors ?: emptyList()
+                val majors = uni.majors
                 if (majors.isEmpty()) {
                     item {
                         Text(

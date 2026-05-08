@@ -21,7 +21,21 @@ export type UniversityRow = {
   is_partner: boolean
   is_active: boolean
   partner_tier: 'basic' | 'premium' | null
+  pic_name: string | null
+  pic_phone: string | null
+  quota_balance: number
+  total_quota_purchased: number
   created_at: string
+}
+
+export type UniversitySubscribeLog = {
+  id: string
+  university_id: string
+  agent_id: string | null
+  amount: number
+  quota_purchased: number
+  commission_agent: number
+  subscribed_at: string
 }
 
 export type MajorRow = {
@@ -100,6 +114,17 @@ export const searchUniversities = async (query: string): Promise<UniversityRow[]
   const q = encodeURIComponent(query)
   return restFetch<UniversityRow[]>(
     `universities?is_active=eq.true&or=(name.ilike.*${q}*,short_name.ilike.*${q}*,city.ilike.*${q}*)&order=is_partner.desc,name.asc&select=*`
+  )
+}
+
+/** Riwayat subscribe universitas (untuk agen & admin) */
+export const getUniversitySubscribeLogs = async (
+  universityId: string,
+  token: string
+): Promise<UniversitySubscribeLog[]> => {
+  return restFetch<UniversitySubscribeLog[]>(
+    `university_subscribe_logs?university_id=eq.${universityId}&order=subscribed_at.desc&select=*`,
+    token
   )
 }
 

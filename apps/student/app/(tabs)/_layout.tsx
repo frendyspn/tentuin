@@ -1,5 +1,6 @@
 import { Tabs } from 'expo-router'
 import { StyleSheet, Text, View } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Ionicons } from '@expo/vector-icons'
 import { colors, fonts } from '@tentuin/config'
 
@@ -24,11 +25,17 @@ function TabIcon({ name, outlineName, label, focused }: TabIconProps) {
 }
 
 export default function TabsLayout() {
+  const insets = useSafeAreaInsets()
+
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarStyle: styles.tabBar,
+        tabBarStyle: {
+          ...styles.tabBar,
+          height:        60 + insets.bottom,
+          paddingBottom: insets.bottom + 6,
+        },
         tabBarShowLabel: false,
       }}
     >
@@ -70,17 +77,15 @@ export default function TabsLayout() {
 
 const styles = StyleSheet.create({
   tabBar: {
-    backgroundColor: colors.surface,
-    borderTopWidth: 0,
-    height: 88,
-    paddingBottom: 22,
-    paddingTop: 8,
+    backgroundColor:  colors.surface,
+    borderTopWidth:   0,
+    paddingTop:       8,
     paddingHorizontal: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.06,
-    shadowRadius: 20,
-    elevation: 20,
+    shadowColor:      '#000',
+    shadowOffset:     { width: 0, height: -4 },
+    shadowOpacity:    0.06,
+    shadowRadius:     20,
+    elevation:        20,
   },
   tabItem: {
     alignItems: 'center',

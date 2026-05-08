@@ -30,5 +30,5 @@ data class UpdateBankRequest(
     @SerializedName("bank_name")            val bankName:          String,
     @SerializedName("bank_account_number")  val bankAccountNumber: String,
     @SerializedName("bank_account_name")    val bankAccountName:   String,
-    @SerializedName("updated_at")           val updatedAt:         String = java.time.Instant.now().toString(),
+    @SerializedName("updated_at")           val updatedAt:         String = System.currentTimeMillis().toString(),
 )

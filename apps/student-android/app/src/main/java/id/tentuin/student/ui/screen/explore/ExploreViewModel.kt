@@ -43,13 +43,21 @@ data class ExploreUiState(
 
 @HiltViewModel
 class ExploreViewModel @Inject constructor(
-    private val repository: ExploreRepository
+    private val repository: ExploreRepository,
+    savedStateHandle: androidx.lifecycle.SavedStateHandle
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ExploreUiState())
     val uiState: StateFlow<ExploreUiState> = _uiState.asStateFlow()
     private var searchJob: Job? = null
 
     init {
+        val initialRiasec = savedStateHandle.get<String>("riasecCode")
+        if (initialRiasec != null) {
+            _uiState.update { it.copy(
+                activeTab = ExploreTab.MAJORS,
+                riasecCode = initialRiasec
+            ) }
+        }
         refreshUniversities()
         refreshMajors()
     }

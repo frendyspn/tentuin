@@ -8,11 +8,16 @@ import androidx.navigation.compose.composable
 import id.tentuin.student.ui.screen.auth.LoginScreen
 import id.tentuin.student.ui.screen.auth.RegisterScreen
 import id.tentuin.student.ui.screen.explore.ExploreScreen
+import id.tentuin.student.ui.screen.explore.UniversityDetailScreen
 import id.tentuin.student.ui.screen.home.HomeScreen
 import id.tentuin.student.ui.screen.onboarding.OnboardingScreen
+import id.tentuin.student.ui.screen.profile.BookmarksScreen
+import id.tentuin.student.ui.screen.profile.EditProfileScreen
 import id.tentuin.student.ui.screen.profile.ProfileScreen
 import id.tentuin.student.ui.screen.splash.SplashScreen
 import id.tentuin.student.ui.screen.test.TestEntryScreen
+import id.tentuin.student.ui.screen.test.TestHistoryScreen
+import id.tentuin.student.ui.screen.test.TestResultScreen
 import id.tentuin.student.ui.screen.test.TestSessionScreen
 
 @Composable
@@ -47,8 +52,26 @@ fun TentuinNavHost(
         composable(Route.Test.route) {
             TestEntryScreen(navController = navController)
         }
-        composable(Route.Explore.route) {
+        composable(
+            route = Route.Explore.route,
+            arguments = listOf(
+                androidx.navigation.navArgument("riasecCode") {
+                    type = androidx.navigation.NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                }
+            )
+        ) {
             ExploreScreen(navController = navController)
+        }
+        composable(
+            route = Route.UniversityDetail.route,
+            arguments = listOf(
+                androidx.navigation.navArgument("id") { type = androidx.navigation.NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id") ?: ""
+            UniversityDetailScreen(navController = navController, universityId = id)
         }
         composable(Route.Profile.route) {
             ProfileScreen(navController = navController)
@@ -58,6 +81,34 @@ fun TentuinNavHost(
         composable(Route.TestSession.route) {
             TestSessionScreen(navController = navController)
         }
-        // TODO: Add TestResult, TestHistory, Details, etc.
+        composable(
+            route = Route.TestResult.route,
+            arguments = listOf(
+                androidx.navigation.navArgument("riasecCode") { type = androidx.navigation.NavType.StringType },
+                androidx.navigation.navArgument("isHistorical") {
+                    type = androidx.navigation.NavType.BoolType
+                    defaultValue = false
+                }
+            )
+        ) { backStackEntry ->
+            val riasecCode = backStackEntry.arguments?.getString("riasecCode") ?: ""
+            val isHistorical = backStackEntry.arguments?.getBoolean("isHistorical") ?: false
+            TestResultScreen(
+                navController = navController,
+                riasecCode = riasecCode,
+                isHistorical = isHistorical
+            )
+        }
+        composable(Route.TestHistory.route) {
+            TestHistoryScreen(navController = navController)
+        }
+
+        // Profile sub-screens
+        composable(Route.EditProfile.route) {
+            EditProfileScreen(navController = navController)
+        }
+        composable(Route.Bookmarks.route) {
+            BookmarksScreen(navController = navController)
+        }
     }
 }

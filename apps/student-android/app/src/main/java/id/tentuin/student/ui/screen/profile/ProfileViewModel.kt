@@ -53,7 +53,7 @@ class ProfileViewModel @Inject constructor(
             }
 
             val profileResult = profileRepo.getProfile(userId)
-            val historyResult = testRepo.getTestHistory(userId)
+            val historyResult = testRepo.getHistory(userId)
             val bookmarksResult = bookmarkRepo.getBookmarks(userId)
 
             _uiState.update { state ->
