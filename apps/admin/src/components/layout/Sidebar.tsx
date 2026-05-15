@@ -1,10 +1,11 @@
+'use client'
+
 import {
   Users,
   School,
   University,
   CreditCard,
   BarChart3,
-  LayoutDashboard,
 } from 'lucide-react'
 import { SidebarLink } from './SidebarLink'
 import { Separator } from '@/components/ui/separator'
