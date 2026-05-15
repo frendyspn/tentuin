@@ -17,3 +17,6 @@ dependencyResolutionManagement {
 rootProject.name = "TentuinNative"
 include(":app")
 include(":agent")
+include(":admin")
+include(":school-pic")
+include(":university")
