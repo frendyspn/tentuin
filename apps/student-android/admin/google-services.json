@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "811601781305",
+    "project_id": "tentuin-c784b",
+    "storage_bucket": "tentuin-c784b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:811601781305:android:e5fc4f912c29a72990e3e8",
+        "android_client_info": {
+          "package_name": "id.tentuin.admin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAJbYfyKVrE8nYBHBcxalc54YWfIX8qg7w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
