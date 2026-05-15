@@ -1,0 +1,52 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Pillars of a university building -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M30,50 L30,80 L36,80 L36,50 Z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M48,50 L48,80 L54,80 L54,50 Z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M66,50 L66,80 L72,80 L72,50 Z" />
+
+    <!-- Architrave (top beam) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M22,46 L82,46 L82,50 L22,50 Z" />
+
+    <!-- Pediment (roof) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M52,28 L26,46 L78,46 Z" />
+
+    <!-- Graduation cap accent on pediment -->
+    <path
+        android:fillColor="#FFD54F"
+        android:pathData="M52,32 L62,36 L52,40 L42,36 Z" />
+
+    <!-- Base / steps -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M22,80 L82,80 L82,84 L22,84 Z" />
+
+    <!-- PIC badge ring (bottom right) -->
+    <path
+        android:fillColor="#FFD54F"
+        android:pathData="M80,72 m-10,0 a10,10 0 1,1 20,0 a10,10 0 1,1 -20,0" />
+
+    <!-- PIC person head -->
+    <path
+        android:fillColor="#0F766E"
+        android:pathData="M80,69 m-3,0 a3,3 0 1,1 6,0 a3,3 0 1,1 -6,0" />
+
+    <!-- PIC person shoulders -->
+    <path
+        android:fillColor="#0F766E"
+        android:pathData="M74,76 C74,74 77,73 80,73 C83,73 86,74 86,76 L86,80 L74,80 Z" />
+</vector>
