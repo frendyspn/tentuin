@@ -7,7 +7,7 @@
     "packages/*"
   ],
   "scripts": {
-    "student": "npm run dev --workspace=apps/student",
+    "admin": "npm run dev --workspace=apps/admin",
     "build": "turbo build",
     "lint": "turbo lint",
     "dev": "turbo dev"

@@ -1,22 +1,26 @@
-# Tentuin Native (Kotlin)
+# Tentuin Native (Kotlin) — Multi-module Android
 
-Project ini adalah baseline Android native untuk membandingkan performa dan maintenance dengan app Expo di `apps/student`.
+Root project ini berisi 5 module Android native untuk seluruh app Tentuin.
 
-## Fokus
+## Module
 
-- Satu layar eksplorasi yang memakai data Supabase yang sama.
-- Filter universitas dan jurusan.
-- Search universitas dengan debounce.
-- List native berbasis `RecyclerView`.
+| Module        | Package id                | Audience                                |
+|---------------|---------------------------|------------------------------------------|
+| `:app`        | `id.tentuin.student`      | Siswa SMA (RIASEC test, eksplor kampus)  |
+| `:agent`      | `id.tentuin.agent`        | Agen Tentuin (claim, komisi, withdrawal) |
+| `:admin`      | `id.tentuin.admin`        | Internal super admin                      |
+| `:school-pic` | `id.tentuin.schoolpic`    | PIC sekolah (lihat siswa, komisi)         |
+| `:university` | `id.tentuin.university`   | Universitas (kuota, prospek, follow-up)   |
 
 ## Cara pakai
 
 1. Buka folder `apps/student-android` di Android Studio.
 2. Sinkronkan Gradle.
 3. Jika key Supabase berubah, update `gradle.properties`.
-4. Jalankan di emulator atau device Android.
+4. Pilih run configuration sesuai module yang mau dijalankan.
 
 ## Catatan
 
-- Versi ini sengaja dibuat sebagai pembanding native baseline, bukan port penuh semua layar Expo.
-- Kalau kamu mau, saya bisa lanjut lengkapi route detail seperti detail universitas dan jurusan juga.
+- Project React Native lama (`apps/student`) sudah dihapus per 2026-05-15 — semua app sekarang native Kotlin/Compose.
+- Shared backend: Supabase di `supabase/` (root repo).
+- Migrations: lihat `supabase/migrations/`.
