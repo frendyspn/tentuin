@@ -14,13 +14,17 @@ export const supabaseAnonKey = (
   ''
 ) as string
 
-// Try to create the React Native–flavoured client (with AsyncStorage).
-// In Next.js / Node.js context AsyncStorage is unavailable — fall back to a
-// plain client. The admin app never calls supabase.auth.* from this module
-// (it uses @supabase/ssr instead), so the fallback client is never exercised.
+// AsyncStorage hanya valid di React Native (butuh `window`). Di Next.js/Node
+// server, modul ini ter-resolve tapi getItem-nya crash — jadi kita harus deteksi
+// runtime, bukan sekadar try/catch require. Admin app pakai @supabase/ssr
+// sendiri, jadi client di sini tidak pernah di-pakai untuk auth — tidak masalah
+// kalau tanpa storage.
+const isReactNative =
+  typeof navigator !== 'undefined' && navigator.product === 'ReactNative'
+
 let _supabase: ReturnType<typeof createClient<Database>>
 
-try {
+if (isReactNative) {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const AsyncStorage = require('@react-native-async-storage/async-storage').default
   _supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
@@ -31,9 +35,14 @@ try {
       detectSessionInUrl: false,
     },
   })
-} catch {
-  // AsyncStorage not available (Next.js / server context) — use basic client
-  _supabase = createClient<Database>(supabaseUrl, supabaseAnonKey)
+} else {
+  // Next.js server / Node — basic client, no auto-refresh, no persisted session
+  _supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+    },
+  })
 }
 
 export const supabase = _supabase
