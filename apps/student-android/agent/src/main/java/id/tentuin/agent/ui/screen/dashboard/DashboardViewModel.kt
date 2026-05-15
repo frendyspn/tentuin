@@ -51,8 +51,8 @@ class DashboardViewModel @Inject constructor(
 
             val agent = agentRepository.getCurrentAgent().getOrNull()
             val commissions = commissionRepository.getCommissions(year).getOrDefault(emptyList())
-            val schoolClaims = claimRepository.getSchoolClaims().getOrDefault(emptyList())
-            val uniClaims = claimRepository.getUniversityClaims().getOrDefault(emptyList())
+            val schoolClaims = claimRepository.getMySchoolClaims().getOrDefault(emptyList())
+            val uniClaims = claimRepository.getMyUniversityClaims().getOrDefault(emptyList())
 
             val currentMonthComm = commissions.firstOrNull { it.month == month }
             val totalPending = commissions.filter { it.status == "pending" }.sumOf { it.totalAmount }

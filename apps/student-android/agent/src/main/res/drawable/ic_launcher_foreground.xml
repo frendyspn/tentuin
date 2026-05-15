@@ -1,0 +1,22 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Person head -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M50,44 m-11,0 a11,11 0 1,1 22,0 a11,11 0 1,1 -22,0" />
+    <!-- Person shoulders / torso -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M28,80 C28,68 38,60 50,60 C62,60 72,68 72,80 L72,84 L28,84 Z" />
+    <!-- Star badge (agent mark) - top right -->
+    <path
+        android:fillColor="#FFD54F"
+        android:pathData="M76,30 L78.9,35.9 L85.4,36.8 L80.7,41.4 L81.8,47.9 L76,44.8 L70.2,47.9 L71.3,41.4 L66.6,36.8 L73.1,35.9 Z" />
+    <!-- Star inner highlight -->
+    <path
+        android:fillColor="#FFA000"
+        android:pathData="M76,34 L77.5,37.2 L81,37.7 L78.5,40.1 L79.1,43.6 L76,42 L72.9,43.6 L73.5,40.1 L71,37.7 L74.5,37.2 Z" />
+</vector>

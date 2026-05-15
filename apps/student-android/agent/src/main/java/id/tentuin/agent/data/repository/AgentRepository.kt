@@ -2,6 +2,7 @@ package id.tentuin.agent.data.repository
 
 import id.tentuin.agent.core.datastore.SessionDataStore
 import id.tentuin.agent.core.network.AgentApi
+import id.tentuin.agent.core.util.nowIso
 import id.tentuin.agent.data.model.Agent
 import id.tentuin.agent.data.model.CreateAgentRequest
 import id.tentuin.agent.data.model.UpdateBankRequest
@@ -19,15 +20,38 @@ class AgentRepository @Inject constructor(
         val existing = api.getAgent(id = "eq.$userId")
         if (existing.isNotEmpty()) return@runCatching existing.first()
 
-        val code = generateReferralCode()
         val created = api.createAgent(
             CreateAgentRequest(
-                id = userId,
-                fullName = fullName,
-                email = email,
-                phone = phone,
-                referralCode = code,
-                lastActiveAt = System.currentTimeMillis().toString(),
+                id           = userId,
+                fullName     = fullName,
+                email        = email,
+                phone        = phone,
+                referralCode = generateReferralCode(),
+            )
+        )
+        created.first()
+    }
+
+    /** Self-heal: pastikan row agent ada. Kalau tidak ada, ambil metadata dari /auth/v1/user
+     *  (full_name + phone hasil register), lalu insert. Dipakai saat login agar resilient
+     *  terhadap akun yang dihapus / migration RLS yang sebelumnya gagal. */
+    suspend fun ensureAgentExists(): Result<Agent> = runCatching {
+        val userId = session.userId.first() ?: error("Not logged in")
+        val existing = api.getAgent(id = "eq.$userId")
+        if (existing.isNotEmpty()) return@runCatching existing.first()
+
+        val authUser = api.getAuthUser()
+        val fullName = authUser.userMetadata?.fullName?.takeIf { it.isNotBlank() }
+            ?: authUser.email.substringBefore('@')
+        val phone    = authUser.userMetadata?.phone
+
+        val created = api.createAgent(
+            CreateAgentRequest(
+                id           = userId,
+                fullName     = fullName,
+                email        = authUser.email,
+                phone        = phone,
+                referralCode = generateReferralCode(),
             )
         )
         created.first()
@@ -42,7 +66,7 @@ class AgentRepository @Inject constructor(
         val userId = session.userId.first() ?: return@runCatching
         api.updateAgentLastActive(
             id = "eq.$userId",
-            body = mapOf("last_active_at" to System.currentTimeMillis().toString())
+            body = mapOf("last_active_at" to nowIso())
         )
         Unit
     }

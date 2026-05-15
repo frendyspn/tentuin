@@ -1,11 +1,11 @@
 package id.tentuin.agent.ui.navigation
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.automirrored.outlined.List
 import androidx.compose.material.icons.filled.Dashboard
-import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.outlined.Dashboard
-import androidx.compose.material.icons.outlined.List
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -27,7 +27,7 @@ private data class NavItem(
 
 private val items = listOf(
     NavItem(Route.Dashboard.route, "Dashboard", Icons.Filled.Dashboard, Icons.Outlined.Dashboard),
-    NavItem(Route.Activity.route,  "Aktivitas", Icons.Filled.List,      Icons.Outlined.List),
+    NavItem(Route.Activity.route,  "Aktivitas", Icons.AutoMirrored.Filled.List, Icons.AutoMirrored.Outlined.List),
     NavItem(Route.Profile.route,   "Profil",    Icons.Filled.Person,    Icons.Outlined.Person),
 )
 

@@ -26,6 +26,9 @@ interface AgentApi {
     @POST("auth/v1/logout")
     suspend fun logout(@Header("Authorization") token: String): ResponseBody
 
+    @GET("auth/v1/user")
+    suspend fun getAuthUser(): AuthUserDetail
+
     // ── Agents ────────────────────────────────────────────────────────────
     @GET("rest/v1/agents")
     suspend fun getAgent(
@@ -80,15 +83,24 @@ interface AgentApi {
     @GET("rest/v1/agent_school_claims")
     suspend fun getSchoolClaims(
         @Query("agent_id")  agentId:  String,
-        @Query("is_active") isActive: String = "eq.true",
-        @Query("select")    select:   String = "*,school:schools(id,name,city,province,total_students,logo_url)",
+        @Query("status")    status:   String = "in.(pending,active)",
+        @Query("select")    select:   String = "*,school:schools(id,name,city,province,total_students,logo_url,npsn,address)",
         @Query("order")     order:    String = "claimed_at.desc",
+    ): List<SchoolClaim>
+
+    /** Semua klaim sekolah yang sedang pending/active (lintas agen) — dipakai di Klaim screen
+     *  agar agen bisa lihat sekolah mana yang sudah dipegang agen lain. */
+    @GET("rest/v1/agent_school_claims")
+    suspend fun getAllActiveSchoolClaims(
+        @Query("status") status: String = "in.(pending,active)",
+        @Query("select") select: String = "id,agent_id,school_id,status,claim_code,verified_at,expires_at,claimed_at,is_active",
+        @Query("limit")  limit:  Int    = 1000,
     ): List<SchoolClaim>
 
     @GET("rest/v1/agent_school_claims")
     suspend fun checkSchoolClaim(
         @Query("school_id") schoolId: String,
-        @Query("is_active") isActive: String = "eq.true",
+        @Query("status")    status:   String = "in.(pending,active)",
         @Query("select")    select:   String = "id",
     ): List<SchoolClaim>
 
@@ -108,15 +120,23 @@ interface AgentApi {
     @GET("rest/v1/agent_university_claims")
     suspend fun getUniversityClaims(
         @Query("agent_id")  agentId:  String,
-        @Query("is_active") isActive: String = "eq.true",
+        @Query("status")    status:   String = "in.(pending,active)",
         @Query("select")    select:   String = "*,university:universities(id,name,short_name,city,logo_url,quota_balance,is_partner,partner_tier)",
         @Query("order")     order:    String = "claimed_at.desc",
+    ): List<UniversityClaim>
+
+    /** Semua klaim kampus pending/active (lintas agen). */
+    @GET("rest/v1/agent_university_claims")
+    suspend fun getAllActiveUniversityClaims(
+        @Query("status") status: String = "in.(pending,active)",
+        @Query("select") select: String = "id,agent_id,university_id,status,claim_code,verified_at,expires_at,claimed_at,is_active",
+        @Query("limit")  limit:  Int    = 1000,
     ): List<UniversityClaim>
 
     @GET("rest/v1/agent_university_claims")
     suspend fun checkUniversityClaim(
         @Query("university_id") universityId: String,
-        @Query("is_active")     isActive:     String = "eq.true",
+        @Query("status")        status:       String = "in.(pending,active)",
         @Query("select")        select:       String = "id",
     ): List<UniversityClaim>
 

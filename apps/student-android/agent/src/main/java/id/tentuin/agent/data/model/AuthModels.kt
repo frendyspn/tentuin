@@ -33,3 +33,10 @@ data class AuthUser(
     @SerializedName("id")    val id:    String,
     @SerializedName("email") val email: String,
 )
+
+/** Detail user dari endpoint /auth/v1/user — punya user_metadata (full_name, phone dari registrasi). */
+data class AuthUserDetail(
+    @SerializedName("id")            val id:           String,
+    @SerializedName("email")         val email:        String,
+    @SerializedName("user_metadata") val userMetadata: AgentMeta? = null,
+)

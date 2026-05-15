@@ -23,12 +23,12 @@ data class CreateAgentRequest(
     @SerializedName("email")          val email:        String,
     @SerializedName("phone")          val phone:        String?,
     @SerializedName("referral_code")  val referralCode: String,
-    @SerializedName("last_active_at") val lastActiveAt: String,
+    // last_active_at omitted → server pakai DEFAULT now()
 )
 
 data class UpdateBankRequest(
     @SerializedName("bank_name")            val bankName:          String,
     @SerializedName("bank_account_number")  val bankAccountNumber: String,
     @SerializedName("bank_account_name")    val bankAccountName:   String,
-    @SerializedName("updated_at")           val updatedAt:         String = System.currentTimeMillis().toString(),
+    // updated_at omitted → trigger handle_updated_at akan refresh otomatis
 )

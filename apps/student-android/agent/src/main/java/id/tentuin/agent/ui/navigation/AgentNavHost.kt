@@ -7,9 +7,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import id.tentuin.agent.ui.screen.auth.LoginScreen
 import id.tentuin.agent.ui.screen.auth.RegisterScreen
+import id.tentuin.agent.ui.screen.claim.ClaimSchoolScreen
+import id.tentuin.agent.ui.screen.claim.ClaimUniversityScreen
+import id.tentuin.agent.ui.screen.commission.CommissionScreen
 import id.tentuin.agent.ui.screen.dashboard.DashboardScreen
 import id.tentuin.agent.ui.screen.activity.ActivityScreen
+import id.tentuin.agent.ui.screen.portfolio.PortfolioScreen
 import id.tentuin.agent.ui.screen.profile.ProfileScreen
+import id.tentuin.agent.ui.screen.withdrawal.WithdrawalScreen
 
 import id.tentuin.agent.ui.screen.splash.SplashScreen
 
@@ -28,11 +33,11 @@ fun AgentNavHost(
         composable(Route.Register.route) { RegisterScreen(navController = navController) }
         composable(Route.Dashboard.route) { DashboardScreen(navController = navController) }
         composable(Route.Activity.route) { ActivityScreen(navController = navController) }
-        composable(Route.ClaimSchool.route) { /* TODO: Implement ClaimSchoolScreen */ }
-        composable(Route.ClaimUniversity.route) { /* TODO: Implement ClaimUniversityScreen */ }
-        composable(Route.Portfolio.route) { /* TODO: Implement PortfolioScreen */ }
-        composable(Route.Commission.route) { /* TODO: Implement CommissionScreen */ }
-        composable(Route.Withdrawal.route) { /* TODO: Implement WithdrawalScreen */ }
+        composable(Route.ClaimSchool.route) { ClaimSchoolScreen(navController = navController) }
+        composable(Route.ClaimUniversity.route) { ClaimUniversityScreen(navController = navController) }
+        composable(Route.Portfolio.route) { PortfolioScreen(navController = navController) }
+        composable(Route.Commission.route) { CommissionScreen(navController = navController) }
+        composable(Route.Withdrawal.route) { WithdrawalScreen(navController = navController) }
         composable(Route.Profile.route) { ProfileScreen(navController = navController) }
     }
 }
